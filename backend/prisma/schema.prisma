@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrigemPedido {
+  filamento
+  impressora
+}
+
+model Pedido {
+  // Id interno nosso (não é o id do Tiny) — cada conta Tiny tem sua própria
+  // numeração, então dois pedidos de contas diferentes podem ter o mesmo
+  // tinyId. O id do Tiny + a origem juntos é que identificam o pedido de
+  // forma única (usado no upsert da sincronização).
+  id                 Int          @id @default(autoincrement())
+  tinyId             Int          @map("tiny_id")
+  origem             OrigemPedido
+  numero             Int?
+  numeroEcommerce    String?  @map("numero_ecommerce")
+  dataPedido         DateTime? @map("data_pedido")
+  dataFaturamento    DateTime? @map("data_faturamento")
+  dataEnvio          DateTime? @map("data_envio")
+  dataEntrega        DateTime? @map("data_entrega")
+  situacao           String?
+  nomeCliente        String?  @map("nome_cliente")
+  cpfCnpj            String?  @map("cpf_cnpj")
+  cpfCnpjLimpo       String?  @map("cpf_cnpj_limpo")
+  telefone           String?
+  telefoneLimpo      String?  @map("telefone_limpo")
+  email              String?
+  enderecoCobranca   Json?    @map("endereco_cobranca")
+  enderecoEntrega    Json?    @map("endereco_entrega")
+  valorFrete         Decimal? @map("valor_frete") @db.Decimal(10, 2)
+  formaEnvio         String?  @map("forma_envio")
+  formaFrete         String?  @map("forma_frete")
+  urlRastreamento    String?  @map("url_rastreamento")
+  codigoRastreamento String?  @map("codigo_rastreamento")
+  idNotaFiscal       Int?     @map("id_nota_fiscal")
+  criadoEm           DateTime @default(now()) @map("criado_em")
+  atualizadoEm       DateTime @updatedAt @map("atualizado_em")
+
+  @@unique([tinyId, origem])
+  @@index([cpfCnpjLimpo])
+  @@index([telefoneLimpo])
+  @@index([email])
+  @@index([numeroEcommerce])
+  @@index([numero])
+  @@map("pedidos")
+}
+
+// Uma linha por conta Tiny (origem), cada uma com seu próprio cursor de
+// sincronização — as contas são independentes, cada uma com seu próprio
+// histórico de atualizações no Tiny.
+model SyncControl {
+  origem       OrigemPedido @id
+  lastSyncedAt DateTime?    @map("last_synced_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  @@map("sync_control")
+}
