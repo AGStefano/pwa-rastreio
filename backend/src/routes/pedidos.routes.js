@@ -51,6 +51,15 @@ router.get(
 );
 
 router.get(
+  "/:id/rastreio/pacotes/:trackingCode",
+  asyncHandler(async (req, res) => {
+    const id = parseIdOuErro(req);
+    const resultado = await rastreioService.obterRastreioPacote(id, req.params.trackingCode);
+    res.json(resultado);
+  })
+);
+
+router.get(
   "/:id/nota-fiscal",
   asyncHandler(async (req, res) => {
     const id = parseIdOuErro(req);

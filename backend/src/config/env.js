@@ -39,6 +39,10 @@ module.exports = {
   olist: {
     trackingBaseUrl:
       process.env.OLIST_ENVIOS_BASE_URL || "https://envios-api.olist.com/v1/bff/volumes/",
+    // Rastreio em nível de pedido (não de pacote) — o codigo_rastreamento do
+    // Tiny é um shipment que pode conter vários volumes/pacotes.
+    shipmentsBaseUrl:
+      process.env.OLIST_ENVIOS_SHIPMENTS_BASE_URL || "https://envios-api.olist.com/v1/shipments/trackings/",
     timeoutMs: int("OLIST_HTTP_TIMEOUT_MS", 10000),
   },
 

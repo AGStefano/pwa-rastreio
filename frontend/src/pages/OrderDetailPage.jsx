@@ -5,6 +5,7 @@ import OrderList from "../components/OrderList";
 import StatusBadge from "../components/StatusBadge";
 import InfoCard from "../components/InfoCard";
 import TrackingTimeline from "../components/TrackingTimeline";
+import PackageTrackingList from "../components/PackageTrackingList";
 import DownloadInvoiceButton from "../components/DownloadInvoiceButton";
 import { EmptyState, ErrorMessage, AvisoMessage } from "../components/Feedback";
 import { LoadingSpinner, OrderDetailSkeleton } from "../components/LoadingSpinner";
@@ -148,6 +149,12 @@ export default function OrderDetailPage() {
   const previsaoEntrega =
     rastreioInfo?.rastreio?.delivery_detail?.carrier_promissed_date ||
     rastreioInfo?.rastreio?.delivery_detail?.olist_promissed_date;
+  // Pedido com vários pacotes: não há uma única transportadora/previsão no
+  // nível do shipment, então junta o que dá pra saber de cada pacote.
+  const nomesTransportadoras = rastreioInfo?.pacotes?.length
+    ? [...new Set(rastreioInfo.pacotes.map((p) => p.carrierName).filter(Boolean))].join(", ")
+    : null;
+  const carrierName = rastreioInfo?.rastreio?.carrier_name || nomesTransportadoras;
 
   return (
     <div className="mx-auto max-w-lg px-4 pb-24 pt-10">
@@ -166,11 +173,7 @@ export default function OrderDetailPage() {
       </div>
 
       <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <InfoCard
-          icone={<IconTruck />}
-          label="Transportadora"
-          valor={rastreioInfo?.rastreio?.carrier_name}
-        />
+        <InfoCard icone={<IconTruck />} label="Transportadora" valor={carrierName} />
         <InfoCard
           icone={<IconCalendar />}
           label="Previsão de entrega"
@@ -206,7 +209,11 @@ export default function OrderDetailPage() {
         ) : (
           <>
             {rastreioInfo?.aviso && <div className="mb-4"><AvisoMessage mensagem={rastreioInfo.aviso} /></div>}
-            <TrackingTimeline eventos={trackingEvents} />
+            {rastreioInfo?.tipo === "pedido" ? (
+              <PackageTrackingList pedidoId={pedido.id} pacotes={rastreioInfo.pacotes} />
+            ) : (
+              <TrackingTimeline eventos={trackingEvents} />
+            )}
           </>
         )}
       </div>

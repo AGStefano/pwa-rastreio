@@ -13,6 +13,12 @@ export async function obterRastreio(id) {
   return request(`/pedidos/${id}/rastreio`);
 }
 
+// Detalhe completo de um pacote específico, para pedidos com vários volumes
+// (buscado sob demanda quando o usuário expande o card do pacote).
+export async function obterRastreioPacote(id, trackingCode) {
+  return request(`/pedidos/${id}/rastreio/pacotes/${encodeURIComponent(trackingCode)}`);
+}
+
 // Baixa o PDF da nota fiscal e dispara o download no navegador.
 export async function baixarNotaFiscal(id, nomeArquivoSugerido) {
   const blob = await request(`/pedidos/${id}/nota-fiscal`, { responseType: "blob" });

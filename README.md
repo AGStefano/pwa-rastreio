@@ -41,7 +41,8 @@ Copie `.env.example` para `.env` e preencha:
 | `TINY_API_TOKEN_IMPRESSORA` | Token da conta Tiny de impressoras (**obrigatório**) |
 | `TINY_API_BASE_URL` | Base da API do Tiny (não precisa mudar) |
 | `TINY_HTTP_TIMEOUT_MS` | Timeout das chamadas ao Tiny |
-| `OLIST_ENVIOS_BASE_URL` | Base da API de rastreio da Olist Envios |
+| `OLIST_ENVIOS_BASE_URL` | Base da API de rastreio da Olist Envios (nível de pacote/volume) |
+| `OLIST_ENVIOS_SHIPMENTS_BASE_URL` | Base da API de rastreio da Olist Envios (nível de pedido/shipment, quando o pedido tem vários pacotes) |
 | `OLIST_HTTP_TIMEOUT_MS` | Timeout das chamadas de rastreio |
 | `TINY_RATE_LIMIT_PER_MINUTE` | Limite de requisições/min ao Tiny (limite real é 60, deixamos margem — padrão 45) |
 | `TINY_RETRY_MAX_ATTEMPTS` / `TINY_RETRY_BASE_DELAY_MS` | Retry com backoff exponencial em caso de erro de rate limit (429 ou erro equivalente no corpo da resposta do Tiny) |
