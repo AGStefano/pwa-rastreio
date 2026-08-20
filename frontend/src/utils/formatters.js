@@ -1,8 +1,8 @@
-export function formatarData(valor) {
-  if (!valor) return "—";
-  const data = new Date(valor);
-  if (Number.isNaN(data.getTime())) return "—";
-  return data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+export function formatarData(dataStr) {
+  if (!dataStr) return null;
+  const [ano, mes, dia] = dataStr.split("-").map(Number);
+  const data = new Date(ano, mes - 1, dia); // construído em horário LOCAL, sem UTC
+  return data.toLocaleDateString("pt-BR");
 }
 
 export function formatarDataHora(valor) {
